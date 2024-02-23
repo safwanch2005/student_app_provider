@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:student_app_provider/controller/controller.dart';
 import 'package:student_app_provider/pages/add_student_page/add_student.dart';
 import 'package:student_app_provider/pages/grid_view/grid_view.dart';
 import 'package:student_app_provider/pages/list_view/list_view.dart';
@@ -16,9 +17,9 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   List<Widget> pages = [
-    ListViewPage(),
+    const ListViewPage(),
     const GridViewPage(),
-    const AddStudentPage(),
+    AddStudentPage(),
     const SearchPage()
   ];
   int page = 0;
