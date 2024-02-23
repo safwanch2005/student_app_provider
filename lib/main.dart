@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:student_app_provider/controller/controller.dart';
+import 'package:student_app_provider/controller/index_provider.dart';
 import 'package:student_app_provider/model/model.dart';
 import 'package:student_app_provider/splash_screen/splash_screen.dart';
 
@@ -11,14 +12,7 @@ main() async {
   if (!Hive.isAdapterRegistered(StudentModelAdapter().typeId)) {
     Hive.registerAdapter(StudentModelAdapter());
   }
-  await openHiveBoxes();
   runApp(const MyApp());
-}
-
-Future<void> openHiveBoxes() async {
-  if (!Hive.isBoxOpen(STUDENT_DB)) {
-    await Hive.openBox<StudentModel>(STUDENT_DB);
-  }
 }
 
 class MyApp extends StatelessWidget {
@@ -28,7 +22,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => ScreenProvider())
+        ChangeNotifierProvider(create: (context) => ScreenProvider()),
+        ChangeNotifierProvider(create: (context) => IndexProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

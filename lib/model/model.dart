@@ -13,15 +13,13 @@ class StudentModel {
   final int rollNo;
   @HiveField(4)
   final int parentNumber;
+  @HiveField(5)
+  final String image;
   StudentModel(
-      {required this.id,
+      {this.id,
       required this.name,
       required this.age,
       required this.rollNo,
-      required this.parentNumber});
-
-  @override
-  String toString() {
-    return "{$id $name $age $rollNo $parentNumber}";
-  }
+      required this.parentNumber,
+      required this.image});
 }

@@ -1,42 +1,75 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:student_app_provider/model/model.dart';
+import 'package:image_picker/image_picker.dart';
 
-const STUDENT_DB = "student-db";
+const String dbName = 'student_database';
 
 class ScreenProvider extends ChangeNotifier {
-  List<StudentModel> studentList = [];
+  List<StudentModel> allStudentList = <StudentModel>[];
 
-  Future<void> addStudent(StudentModel value) async {
-    try {
-      final studentDB = await Hive.openBox<StudentModel>(STUDENT_DB);
-      await studentDB.add(value);
-      await getStudents(); // Update the student list after adding
-      notifyListeners();
-    } catch (e) {
-      print('Error adding student: $e');
-    }
+  Future<void> addStudent(StudentModel data) async {
+    final db = await Hive.openBox<StudentModel>(dbName);
+    data.id = await db.add(data);
+    db.put(data.id, data);
+    await getStudents();
+    notifyListeners();
   }
 
-  Future<void> getStudents() async {
-    print(studentList);
-    try {
-      studentList.clear();
-      final allStudents = await getAllData();
-      studentList.addAll(allStudents);
-      notifyListeners();
-    } catch (e) {
-      print('Error getting students: $e');
-    }
+  Future<void> editStudent(StudentModel data) async {
+    final db = await Hive.openBox<StudentModel>(dbName);
+    db.put(data.id, data);
+    await getStudents();
+    notifyListeners();
+  }
+
+  Future<void> deleteStudent(int id) async {
+    final db = await Hive.openBox<StudentModel>(dbName);
+    await db.delete(id);
+    await getStudents();
   }
 
   Future<List<StudentModel>> getAllData() async {
-    try {
-      final db = await Hive.openBox<StudentModel>(STUDENT_DB);
-      return db.values.toList();
-    } catch (e) {
-      print('Error getting all data: $e');
-      return [];
-    }
+    final db = await Hive.openBox<StudentModel>(dbName);
+    return db.values.toList();
+  }
+
+  Future<void> getStudents() async {
+    allStudentList.clear();
+    final allStudents = await getAllData();
+    Future.forEach(allStudents, (element) {
+      allStudentList.add(element);
+    });
+    notifyListeners();
+  }
+
+  Future<void> searchStudent(String name) async {
+    allStudentList.clear();
+    final allStudentsList = await getAllData();
+    Future.forEach(allStudentsList, (element) {
+      if (element.name.toLowerCase().contains(name.toLowerCase())) {
+        allStudentList.add(element);
+      }
+    });
+    notifyListeners();
+  }
+
+  String image = '';
+
+  void clearImage() {
+    image = '';
+    notifyListeners();
+  }
+
+  Future<void> pickImage() async {
+    final imgFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    image = imgFile!.path;
+    notifyListeners();
+  }
+
+  void updateImage(String imageFile) {
+    image = imageFile;
+    notifyListeners();
   }
 }

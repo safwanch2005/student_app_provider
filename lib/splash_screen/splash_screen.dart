@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:student_app_provider/controller/controller.dart';
 import 'package:student_app_provider/home/home.dart';
 
 class SplachScreen extends StatefulWidget {

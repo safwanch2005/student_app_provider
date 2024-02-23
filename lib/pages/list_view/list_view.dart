@@ -1,8 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:student_app_provider/controller/controller.dart';
-import 'package:student_app_provider/model/model.dart';
+import 'package:student_app_provider/controller/index_provider.dart';
 import 'package:student_app_provider/pages/details_page/details_page.dart';
 
 class ListViewPage extends StatefulWidget {
@@ -15,12 +17,11 @@ class ListViewPage extends StatefulWidget {
 class _ListViewPageState extends State<ListViewPage> {
   @override
   Widget build(BuildContext context) {
-    return Consumer<ScreenProvider>(builder: (context, value, child) {
-      print(value.studentList);
-      return ListView.builder(
-          itemCount: value.studentList.length,
+    return Consumer<ScreenProvider>(
+      builder: (BuildContext context, screenProvider, _) => ListView.builder(
+          itemCount: screenProvider.allStudentList.length,
           itemBuilder: (context, index) {
-            print(value.studentList.length);
+            final data = screenProvider.allStudentList[index];
             return GestureDetector(
               onTap: () {
                 Navigator.of(context).push(MaterialPageRoute(
@@ -37,44 +38,88 @@ class _ListViewPageState extends State<ListViewPage> {
                 margin:
                     const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                 child: ListTile(
-                  leading: const CircleAvatar(
-                    radius: 30,
-                    backgroundColor: Colors.deepPurple,
-                    child: Icon(Icons.person),
+                  leading: CircleAvatar(
+                    radius: 32,
+                    backgroundImage: FileImage(File(data.image)),
                   ),
                   title: Text(
-                    "safwan",
+                    data.name,
                     style: GoogleFonts.poppins(fontSize: 23),
                   ),
-                  subtitle: Text("age : 19",
+                  subtitle: Text("age : ${data.age.toString()}",
                       style: GoogleFonts.poppins(color: Colors.black54)),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       GestureDetector(
                         onTap: () {
-                          final value = StudentModel(
-                              id: DateTime.now().millisecondsSinceEpoch,
-                              name: "safwan",
-                              age: 19,
-                              rollNo: 8,
-                              parentNumber: 654654654);
-                          Provider.of<ScreenProvider>(context, listen: false)
-                              .addStudent(value);
+                          IndexProvider().changeIndex(2);
+                          print("///////");
+                          // screenProvider.updateImage(data.image);
+                          // Navigator.of(context)
+                          //     .push(MaterialPageRoute(builder: (ctx) {
+                          //   return EditStudent(
+                          //       name: data.name,
+                          //       age: data.age,
+                          //       std: data.rollNo,
+                          //       place: data.parentNumber,
+                          //       image: data.image,
+                          //       id: data.id!);
+                          // }));
                         },
                         child: const Icon(Icons.edit_outlined),
                       ),
                       const SizedBox(width: 20),
                       GestureDetector(
-                        onTap: () {},
-                        child: const Icon(Icons.delete),
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (ctx) {
+                              return AlertDialog(
+                                backgroundColor: Colors.black,
+                                title: const Text('Delete',
+                                    style: TextStyle(color: Colors.deepPurple)),
+                                content: const Text(
+                                  'Confirm ?',
+                                  style: TextStyle(color: Colors.deepPurple),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: const Text('No'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () async {
+                                      await screenProvider
+                                          .deleteStudent(data.id!);
+                                      Navigator.of(context).pop();
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(const SnackBar(
+                                        content: Text('Deleted Successfully'),
+                                        backgroundColor: Colors.deepPurple,
+                                        behavior: SnackBarBehavior.floating,
+                                      ));
+                                    },
+                                    child: const Text('Yes'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                        child: const Icon(
+                          Icons.delete,
+                          color: Colors.deepPurple,
+                        ),
                       ),
                     ],
                   ),
                 ),
               ),
             );
-          });
-    });
+          }),
+    );
   }
 }
