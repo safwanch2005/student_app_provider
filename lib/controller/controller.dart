@@ -44,12 +44,14 @@ class ScreenProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> searchStudent(String name) async {
+  Future<void> searchStudent(String? name) async {
     allStudentList.clear();
     final allStudentsList = await getAllData();
     Future.forEach(allStudentsList, (element) {
-      if (element.name.toLowerCase().contains(name.toLowerCase())) {
-        allStudentList.add(element);
+      if (name != null) {
+        if (element.name.toLowerCase().contains(name.toLowerCase())) {
+          allStudentList.add(element);
+        }
       }
     });
     notifyListeners();

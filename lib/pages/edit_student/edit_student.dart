@@ -6,16 +6,33 @@ import 'package:provider/provider.dart';
 import 'package:student_app_provider/controller/controller.dart';
 import 'package:student_app_provider/model/model.dart';
 
-class AddStudentPage extends StatelessWidget {
-  AddStudentPage({super.key});
+class EditStudent extends StatelessWidget {
+  EditStudent(
+      {super.key,
+      required this.name,
+      required this.age,
+      required this.rollNo,
+      required this.parentNum,
+      required this.image,
+      required this.id});
   final _formKey = GlobalKey<FormState>();
   final _nameEdditingController = TextEditingController();
   final _ageEdditingController = TextEditingController();
   final _rollNoEdditingController = TextEditingController();
   final _parentNumberEdditingController = TextEditingController();
+  final int id;
+
+  final String name;
+  final String age;
+  final String rollNo;
+  final String parentNum;
+  final String image;
   @override
   Widget build(BuildContext context) {
-    screenProvider.clearImage();
+    _nameEdditingController.text = name;
+    _ageEdditingController.text = age;
+    _rollNoEdditingController.text = rollNo;
+    _parentNumberEdditingController.text = parentNum;
 
     return Scaffold(
       backgroundColor: Colors.deepPurple,
@@ -177,35 +194,24 @@ class AddStudentPage extends StatelessWidget {
                     height: 40,
                     child: ElevatedButton(
                       onPressed: () async {
-                        if (_formKey.currentState!.validate() &&
-                            screenProvider.image.isNotEmpty) {
+                        if (_formKey.currentState!.validate()) {
                           final data = StudentModel(
+                              id: id,
                               name: _nameEdditingController.text,
                               age: int.parse(_ageEdditingController.text),
                               rollNo: int.parse(_rollNoEdditingController.text),
                               parentNumber: int.parse(
                                   _parentNumberEdditingController.text),
                               image: screenProvider.image);
-                          await screenProvider.addStudent(data);
-                          _nameEdditingController.clear();
-                          _ageEdditingController.clear();
-                          _rollNoEdditingController.clear();
-                          _parentNumberEdditingController.clear();
+                          await context
+                              .read<ScreenProvider>()
+                              .editStudent(data);
                           screenProvider.clearImage();
-
-                          screenProvider.clearImage();
+                          Navigator.of(context).pop();
                           ScaffoldMessenger.of(context)
                               .showSnackBar(const SnackBar(
-                            content: Text('Added Successfully'),
-                            backgroundColor: Colors.black12,
-                            behavior: SnackBarBehavior.floating,
-                          ));
-                          Navigator.pop(context);
-                        } else if (screenProvider.image.isEmpty) {
-                          ScaffoldMessenger.of(context)
-                              .showSnackBar(const SnackBar(
-                            content: Text('Please Upload Image'),
-                            backgroundColor: Colors.black12,
+                            content: Text('Updated Successfully'),
+                            backgroundColor: Colors.green,
                             behavior: SnackBarBehavior.floating,
                           ));
                         }

@@ -7,7 +7,6 @@ import 'package:student_app_provider/controller/index_provider.dart';
 import 'package:student_app_provider/pages/add_student_page/add_student.dart';
 import 'package:student_app_provider/pages/grid_view/grid_view.dart';
 import 'package:student_app_provider/pages/list_view/list_view.dart';
-import 'package:student_app_provider/pages/search_page/search_page.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -19,9 +18,8 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   List<Widget> pages = [
     const ListViewPage(),
-    const GridViewPage(),
+    GridViewPage(),
     AddStudentPage(),
-    const SearchPage()
   ];
 
   @override
@@ -77,23 +75,28 @@ class _HomeState extends State<Home> {
                   value.changeIndex(1);
                 },
               ),
-              GButton(
-                backgroundColor: Colors.black26,
-                icon: Icons.add,
-                text: 'add',
-                onPressed: () {
-                  value.changeIndex(2);
-                },
-              ),
-              GButton(
-                backgroundColor: Colors.black26,
-                icon: Icons.search,
-                text: 'search',
-                onPressed: () {
-                  value.changeIndex(3);
-                },
-              ),
+              // GButton(
+              //   backgroundColor: Colors.black26,
+              //   icon: Icons.add,
+              //   text: 'add',
+              //   onPressed: () {
+
+              //   },
+              // ),
             ]),
+          ),
+          floatingActionButton: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: FloatingActionButton(
+              backgroundColor: Colors.white30,
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AddStudentPage()),
+                );
+              },
+              child: const Icon(Icons.add),
+            ),
           ),
         ),
       ),
